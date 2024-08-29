@@ -10,6 +10,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('/cus.get', [CustomerController::class, 'getCustomer']);
+Route::get("/cus.only/{get}", [CustomerController::class, 'getCustomerById']);
 Route::post('/cus.create', [CustomerController::class, 'createCustomer']);
 Route::put('/cus.update/{put}', [CustomerController::class, 'updateCustomer']);
 Route::delete('/cus.delete/{delete}', [CustomerController::class, 'deleteCustomer']);

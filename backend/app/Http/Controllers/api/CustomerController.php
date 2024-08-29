@@ -18,6 +18,16 @@ class CustomerController extends Controller
         }
     }
 
+    public function getCustomerById(string $id)
+    {
+        try {
+            $customers = Customer::all()->find($id);
+            return response()->json($customers);
+        } catch (\Exception $exception) {
+            return response()->json($exception);
+        }
+    }
+
     public function createCustomer(Request $request)
     {
         try {
@@ -44,6 +54,7 @@ class CustomerController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,
+                'photo' => $request->photo,
             ]);
 
             return response()->json('Customer updated successfully');

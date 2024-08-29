@@ -2,6 +2,17 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Table,
   TableBody,
   TableCaption,
@@ -14,7 +25,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -34,26 +44,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { FormItem } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-  SelectLabel,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { API_URL } from "../config/api";
-import type { Customer } from "./types/customer";
+import { API_URL } from "../../config/api";
+import type { Customer } from "../types/customer";
 
 const customer = ref<Customer[]>([]);
 const name = ref("");
 const gender = ref("");
 const email = ref("");
 const phone = ref("");
+const photo = ref("");
 
 const clearInput = () => {
   name.value = "";
@@ -65,6 +67,7 @@ const clearInput = () => {
 const fetchData = async () => {
   const response = await fetch(API_URL + "/cus.get");
   customer.value = (await response?.json()) ?? [];
+  clearInput();
 };
 
 const handleCreate = async () => {
@@ -94,7 +97,7 @@ const handleDelete = async (id: number) => {
   try {
     await axios({
       method: "delete",
-      url: API_URL + "/cus.delete/" + id,
+      url: `${API_URL}/cus.delete/${id}`,
     });
     fetchData();
   } catch (err) {
@@ -108,7 +111,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <!--  -->
   <div class="container mt-6">
     <Card class="drop-shadow">
       <CardHeader>
@@ -183,18 +185,41 @@ onMounted(() => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger
-                        ><Button @click="handleDelete(row.id)"
-                          >Delete</Button
-                        ></TooltipTrigger
-                      >
-                      <TooltipContent>
-                        <p>Delete Customer Information</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <!--  -->
+                  <AlertDialog>
+                    <AlertDialogTrigger>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger
+                            ><Button>Delete</Button></TooltipTrigger
+                          >
+                          <TooltipContent>
+                            <p>Delete Customer Information</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle
+                          >Are you absolutely sure?</AlertDialogTitle
+                        >
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your record and remove your data rom our
+                          servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          @click="handleDelete(row.id)"
+                          class="bg-red-700"
+                          >Continue</AlertDialogAction
+                        >
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             </TableBody>
