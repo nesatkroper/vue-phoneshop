@@ -54,7 +54,7 @@ import { FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { API_URL } from "../../config/api";
+import { DOMAIN, API_URL } from "../../config/api";
 import type { Customer } from "../types/customer";
 
 const customer = ref<Customer[]>([]);
@@ -79,7 +79,7 @@ const fetchData = async () => {
   clearInput();
 };
 
-const handleFileChange = (event) => {
+const handleFileChange = (event: any) => {
   const file = event.target.files[0];
   selectFile.value = file;
 };
@@ -89,11 +89,13 @@ const handleCreate = async () => {
     alert("Please select a file to create");
     return;
   }
+  console.log(selectFile.value);
 
   try {
     await axios({
       method: "post",
       url: `${API_URL}/cus.create`,
+      withCredentials: false,
       data: {
         name: name.value,
         gender: gender.value,
@@ -233,6 +235,13 @@ onMounted(() => {
             <TableBody>
               <TableRow v-for="(row, index) in customer" :key="row.id">
                 <TableCell>{{ index + 1 }}</TableCell>
+                <TableCell>
+                  <img
+                    class="rounded-md"
+                    :src="`${DOMAIN}/customer/${row.photo}`"
+                    alt="Customer Image"
+                  />
+                </TableCell>
                 <TableCell>{{ row.name }}</TableCell>
                 <TableCell>{{ row.gender }}</TableCell>
                 <TableCell>{{ row.email }}</TableCell>

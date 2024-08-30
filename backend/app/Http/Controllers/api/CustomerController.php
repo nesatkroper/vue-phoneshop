@@ -31,9 +31,11 @@ class CustomerController extends Controller
     public function createCustomer(Request $request)
     {
         try {
+            $path = null;
             if ($request->hasFile('photo')) {
                 $img = $request->file('photo');
-                $path = $img->store('images', 'public');
+                $path = 'customers' . time() . '.' . $img->getClientOriginalExtension();
+                $img->move(public_path('customer'), $path);
             }
 
             Customer::create([
@@ -42,6 +44,7 @@ class CustomerController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,
+                'photo' => $path
             ]);
             return response()->json('Customer created successfully');
         } catch (\Exception $exception) {

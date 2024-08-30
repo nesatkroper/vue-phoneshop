@@ -5,4 +5,5 @@ export type Customer = {
   email: string;
   phone: string;
   address: string;
+  photo: string;
 };
