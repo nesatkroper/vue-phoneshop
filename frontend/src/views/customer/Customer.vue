@@ -43,6 +43,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -51,11 +58,13 @@ import { API_URL } from "../../config/api";
 import type { Customer } from "../types/customer";
 
 const customer = ref<Customer[]>([]);
+const edit = ref<string[]>([]);
+const selectFile = ref(null);
 const name = ref("");
 const gender = ref("");
 const email = ref("");
 const phone = ref("");
-const photo = ref("");
+const address = ref("");
 
 const clearInput = () => {
   name.value = "";
@@ -65,21 +74,36 @@ const clearInput = () => {
 };
 
 const fetchData = async () => {
-  const response = await fetch(API_URL + "/cus.get");
+  const response = await fetch(`${API_URL}/cus.get`);
   customer.value = (await response?.json()) ?? [];
   clearInput();
 };
 
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  selectFile.value = file;
+};
+
 const handleCreate = async () => {
+  if (!selectFile.value) {
+    alert("Please select a file to create");
+    return;
+  }
+
   try {
     await axios({
       method: "post",
-      url: API_URL + "/cus.create",
+      url: `${API_URL}/cus.create`,
       data: {
         name: name.value,
         gender: gender.value,
         email: email.value,
         phone: phone.value,
+        address: address.value,
+        photo: selectFile.value,
+      },
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
     });
     fetchData();
@@ -89,8 +113,28 @@ const handleCreate = async () => {
   }
 };
 
-const handleEdit = (e: number) => {
-  alert(e);
+const handleEdit = async (id: number) => {
+  const response = await fetch(`${API_URL}/cus.only/${id}`);
+  edit.value = (await response?.json()) ?? [];
+};
+
+const handleUpdate = async (id: number) => {
+  try {
+    await axios({
+      method: "put",
+      url: `${API_URL}/cus.update/${id}`,
+      data: {
+        name: edit.value.name,
+        gender: edit.value.gender,
+        email: edit.value.email,
+        phone: edit.value.phone,
+        address: edit.value.address,
+      },
+    });
+    fetchData();
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const handleDelete = async (id: number) => {
@@ -132,7 +176,19 @@ onMounted(() => {
               </FormItem>
               <FormItem class="mt-2">
                 <label for="gender">Gender:</label>
-                <Input v-model="gender" type="text" />
+                <Select v-model="gender">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Gender</SelectLabel>
+                      <SelectItem value="male"> Male </SelectItem>
+                      <SelectItem value="female"> Female </SelectItem>
+                      <SelectItem value="other"> Others </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormItem>
               <FormItem class="mt-2">
                 <label for="email">Email:</label>
@@ -141,6 +197,14 @@ onMounted(() => {
               <FormItem class="mt-2">
                 <label for="phone">Phone:</label>
                 <Input v-model="phone" type="text" />
+              </FormItem>
+              <FormItem class="mt-2">
+                <label for="address">Address:</label>
+                <Input v-model="address" type="text" />
+              </FormItem>
+              <FormItem class="mt-2">
+                <label for="photo">Address:</label>
+                <Input type="file" @change="handleFileChange" />
               </FormItem>
               <FormItem class="mt-2 flex gap-2">
                 <DialogClose>
@@ -152,7 +216,7 @@ onMounted(() => {
         </Dialog>
       </CardHeader>
       <CardContent>
-        <ScrollArea class="h-[700px] rounded-md border p-4">
+        <ScrollArea class="h-[1300px] rounded-md border p-4">
           <Table>
             <TableCaption>A list of your recent invoices.</TableCaption>
             <TableHeader>
@@ -162,6 +226,7 @@ onMounted(() => {
                 <TableHead>Gender</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
+                <TableHead>Address</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -172,18 +237,75 @@ onMounted(() => {
                 <TableCell>{{ row.gender }}</TableCell>
                 <TableCell>{{ row.email }}</TableCell>
                 <TableCell>{{ row.phone }}</TableCell>
+                <TableCell>{{ row.address }}</TableCell>
                 <TableCell class="flex gap-2">
                   <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger
-                        ><Button @click="() => handleEdit(row.id)"
-                          >Edit</Button
-                        ></TooltipTrigger
-                      >
-                      <TooltipContent>
-                        <p>Edit Customer Information</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <!--  -->
+                    <Dialog>
+                      <DialogTrigger class="flex float-start">
+                        <Tooltip>
+                          <TooltipTrigger
+                            ><Button @click="handleEdit(row.id)"
+                              >Edit</Button
+                            ></TooltipTrigger
+                          >
+                          <TooltipContent>
+                            <p>Edit Customer Information</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Information</DialogTitle>
+                          <DialogDescription> </DialogDescription>
+                        </DialogHeader>
+                        <form @submit.prevent="handleUpdate(row.id)">
+                          <FormItem class="mt-2">
+                            <label for="name">Name:</label>
+                            <p>{{ edit.name }}</p>
+                            <Input v-model="edit.name" type="text" />
+                          </FormItem>
+                          <FormItem class="mt-2">
+                            <label for="gender">Gender:</label>
+                            <Select v-model="edit.gender">
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Gender" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel>Gender</SelectLabel>
+                                  <SelectItem value="male"> Male </SelectItem>
+                                  <SelectItem value="female">
+                                    Female
+                                  </SelectItem>
+                                  <SelectItem value="other">
+                                    Others
+                                  </SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                          <FormItem class="mt-2">
+                            <label for="email">Email:</label>
+                            <Input v-model="edit.email" type="email" />
+                          </FormItem>
+                          <FormItem class="mt-2">
+                            <label for="phone">Phone:</label>
+                            <Input v-model="edit.phone" type="text" />
+                          </FormItem>
+                          <FormItem class="mt-2">
+                            <label for="address">Address:</label>
+                            <Input v-model="edit.address" type="text" />
+                          </FormItem>
+                          <FormItem class="mt-2 flex gap-2">
+                            <DialogClose>
+                              <Button type="submit">Submit</Button>
+                            </DialogClose>
+                          </FormItem>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                    <!--  -->
                   </TooltipProvider>
                   <!--  -->
                   <AlertDialog>

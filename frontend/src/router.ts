@@ -1,7 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-// import HomePage from "./views/homepage/Home.vue";
-// import Customer from "./views/customer/Customer.vue";
-// import NotFound from "./views/404/NotFound.vue";
 
 const routes = [
   {

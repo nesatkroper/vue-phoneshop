@@ -4,4 +4,5 @@ export type Customer = {
   gender: string;
   email: string;
   phone: string;
+  address: string;
 };
