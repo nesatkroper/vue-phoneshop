@@ -1,9 +1,10 @@
-<!-- <template>
-  <nav class="bg-gray-800 text-white shadow-md">
+<template>
+  <nav
+    class="fixed top-0 left-0 right-0 bg-white opacity-95 text-black shadow-md z-50"
+  >
     <div class="container mx-auto flex items-center justify-between px-4 py-3">
-
       <div class="text-2xl font-semibold">
-        <RouterLink to="/" class="text-white hover:text-gray-300"
+        <RouterLink to="/" class="text-black hover:text-gray-300"
           >MyApp</RouterLink
         >
       </div>
@@ -18,7 +19,7 @@
           >Contact</RouterLink
         >
       </div>
-      <button @click="toggleMenu" class="md:hidden text-white">
+      <button @click="toggleMenu" class="md:hidden text-black">
         <svg
           class="w-6 h-6"
           fill="none"
@@ -76,23 +77,23 @@ export default {
 
 <style scoped>
 /* Add any additional styles here if needed */
-</style> -->
+</style>
 
-<template>
+<!-- <template>
   <nav class="flex items-center justify-between p-4 bg-white shadow-md">
-    <!-- Left side - Logo -->
     <div class="flex items-center space-x-4">
       <div class="font-semibold text-lg text-gray-800">/shadcn-vue</div>
       <div class="flex space-x-4">
         <a href="#" class="text-gray-600 hover:text-gray-800">Docs</a>
         <a href="#" class="text-gray-600 hover:text-gray-800">Components</a>
         <a href="#" class="text-gray-600 hover:text-gray-800">Themes</a>
-        <a href="#" class="text-gray-600 hover:text-gray-800">Examples</a>
-        <a href="#" class="text-gray-600 hover:text-gray-800">Blocks</a>
+        <a href="/" class="text-gray-600 hover:text-gray-800">Examples</a>
+        <RouterLink to="customer" class="text-gray-600 hover:text-gray-800"
+          >Blocks</RouterLink
+        >
       </div>
     </div>
 
-    <!-- Center - Search Bar -->
     <div class="relative w-1/3">
       <input
         type="text"
@@ -100,14 +101,11 @@ export default {
         class="w-full p-2 pl-8 pr-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
       <div class="absolute left-2 top-2 text-gray-400">
-        <!-- Keyboard shortcut hint -->
         <kbd class="px-2 py-1 text-xs border rounded bg-gray-100">⌘ K</kbd>
       </div>
     </div>
 
-    <!-- Right side - Icons -->
     <div class="flex items-center space-x-4 text-gray-600">
-      <!-- Icons (Replace with actual icon components if needed) -->
       <button class="hover:text-gray-800">
         <svg
           class="w-6 h-6"
@@ -161,9 +159,7 @@ export default {
 </template>
 
 <script setup>
-// No additional script required for this basic implementation
 </script>
 
 <style scoped>
-/* Add custom styles here if needed */
-</style>
+</style> -->

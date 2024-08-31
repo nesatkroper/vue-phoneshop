@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Models\Customer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class CustomerController extends Controller
 {
@@ -56,13 +57,22 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::findOrFail($id);
+            $path = $customer->photo;
+            if ($request->hasFile('photo')) {
+                $old = public_path('customer/' . $path);
+                File::delete($old);
+                $img = $request->file('photo');
+                $path = 'customers' . time() . '.' . $img->getClientOriginalExtension();
+                $img->move(public_path('customer'), $path);
+            }
+
             $customer->update([
                 'name' => $request->name,
                 'gender' => $request->gender,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,
-
+                'photo' => $path,
             ]);
 
             return response()->json('Customer updated successfully');
@@ -75,6 +85,9 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::findOrFail($id);
+            $img = $customer->photo;
+            $file = public_path('customer/' . $img);
+            File::delete($file);
             $customer->delete();
             return response()->json('Customer deleted successfully');
         } catch (\Exception $exception) {

@@ -50,6 +50,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -58,8 +59,9 @@ import { DOMAIN, API_URL } from "../../config/api";
 import type { Customer } from "../types/customer";
 
 const customer = ref<Customer[]>([]);
-const edit = ref<string[]>([]);
-const selectFile = ref(null);
+const edit = ref<Customer[]>([]);
+const selectFile = ref("");
+const imgUrl = ref("");
 const name = ref("");
 const gender = ref("");
 const email = ref("");
@@ -71,71 +73,117 @@ const clearInput = () => {
   gender.value = "";
   email.value = "";
   phone.value = "";
+  address.value = "";
+  imgUrl.value = "";
+  selectFile.value = "";
 };
 
 const fetchData = async () => {
   const response = await fetch(`${API_URL}/cus.get`);
   customer.value = (await response?.json()) ?? [];
-  clearInput();
+  console.log(customer.value);
 };
 
 const handleFileChange = (event: any) => {
   const file = event.target.files[0];
   selectFile.value = file;
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      imgUrl.value = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
 };
 
 const handleCreate = async () => {
   if (!selectFile.value) {
-    alert("Please select a file to create");
+    alert("Please select a photo to create");
     return;
-  }
-  console.log(selectFile.value);
+  } else {
+    try {
+      await axios({
+        method: "post",
+        url: `${API_URL}/cus.create`,
+        withCredentials: false,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data: {
+          name: name.value,
+          gender: gender.value,
+          email: email.value,
+          phone: phone.value,
+          address: address.value,
+          photo: selectFile.value,
+        },
+      })
+        .then((respone) => {
+          console.log(respone);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-  try {
-    await axios({
-      method: "post",
-      url: `${API_URL}/cus.create`,
-      withCredentials: false,
-      data: {
-        name: name.value,
-        gender: gender.value,
-        email: email.value,
-        phone: phone.value,
-        address: address.value,
-        photo: selectFile.value,
-      },
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    fetchData();
-    clearInput();
-  } catch (err) {
-    console.log(err);
+      fetchData();
+      clearInput();
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 
 const handleEdit = async (id: number) => {
-  const response = await fetch(`${API_URL}/cus.only/${id}`);
-  edit.value = (await response?.json()) ?? [];
+  try {
+    const response = await fetch(`${API_URL}/cus.only/${id}`);
+    edit.value = (await response?.json()) ?? [];
+    const data: any = Object.values(edit.value);
+    console.log(data);
+    selectFile.value = data[1];
+    name.value = data[2];
+    gender.value = data[3];
+    email.value = data[4];
+    phone.value = data[5];
+    address.value = data[6];
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const handleUpdate = async (id: number) => {
-  try {
-    await axios({
-      method: "put",
-      url: `${API_URL}/cus.update/${id}`,
-      data: {
-        name: edit.value.name,
-        gender: edit.value.gender,
-        email: edit.value.email,
-        phone: edit.value.phone,
-        address: edit.value.address,
-      },
-    });
-    fetchData();
-  } catch (err) {
-    console.log(err);
+  if (!selectFile.value) {
+    alert("Please select a photo to create");
+    return;
+  } else {
+    try {
+      await axios({
+        method: "put",
+        url: `${API_URL}/cus.update/${id}`,
+        withCredentials: false,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        data: {
+          name: name.value,
+          gender: gender.value,
+          email: email.value,
+          phone: phone.value,
+          address: address.value,
+          photo: selectFile.value,
+        },
+      })
+        .then((respone) => {
+          console.log(respone);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      fetchData();
+      clearInput();
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 
@@ -144,7 +192,13 @@ const handleDelete = async (id: number) => {
     await axios({
       method: "delete",
       url: `${API_URL}/cus.delete/${id}`,
-    });
+    })
+      .then((respone) => {
+        console.log(respone);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     fetchData();
   } catch (err) {
     console.log(err);
@@ -172,42 +226,56 @@ onMounted(() => {
               <DialogDescription> </DialogDescription>
             </DialogHeader>
             <form @submit.prevent="handleCreate">
-              <FormItem class="mt-2">
-                <label for="name">Name:</label>
-                <Input v-model="name" type="text" />
-              </FormItem>
-              <FormItem class="mt-2">
-                <label for="gender">Gender:</label>
-                <Select v-model="gender">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Gender</SelectLabel>
-                      <SelectItem value="male"> Male </SelectItem>
-                      <SelectItem value="female"> Female </SelectItem>
-                      <SelectItem value="other"> Others </SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-              <FormItem class="mt-2">
-                <label for="email">Email:</label>
-                <Input v-model="email" type="email" />
-              </FormItem>
-              <FormItem class="mt-2">
-                <label for="phone">Phone:</label>
-                <Input v-model="phone" type="text" />
-              </FormItem>
+              <div class="flex flex-row gap-4">
+                <FormItem class="mt-2 w-full">
+                  <label for="name">Name:</label>
+                  <Input v-model="name" type="text" />
+                </FormItem>
+                <FormItem class="mt-2 w-full">
+                  <label for="gender">Gender:</label>
+                  <Select v-model="gender">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Gender</SelectLabel>
+                        <SelectItem value="male"> Male </SelectItem>
+                        <SelectItem value="female"> Female </SelectItem>
+                        <SelectItem value="other"> Others </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              </div>
+              <div class="flex flex-row gap-4">
+                <FormItem class="mt-2 w-full">
+                  <label for="email">Email:</label>
+                  <Input v-model="email" type="email" />
+                </FormItem>
+                <FormItem class="mt-2 w-full">
+                  <label for="phone">Phone:</label>
+                  <Input v-model="phone" type="text" />
+                </FormItem>
+              </div>
               <FormItem class="mt-2">
                 <label for="address">Address:</label>
-                <Input v-model="address" type="text" />
+                <Textarea v-model="address" type="text" />
               </FormItem>
-              <FormItem class="mt-2">
-                <label for="photo">Address:</label>
-                <Input type="file" @change="handleFileChange" />
-              </FormItem>
+              <div class="flex flex-row gap-4">
+                <FormItem class="mt-2 w-full">
+                  <label for="photo">Photo:</label>
+                  <Input type="file" @change="handleFileChange" />
+                </FormItem>
+                <FormItem class="mt-2 w-full">
+                  <img
+                    v-if(imgUrl)
+                    :src="imgUrl"
+                    alt="Image Preview"
+                    class="h-[100px] rounded-lg"
+                  />
+                </FormItem>
+              </div>
               <FormItem class="mt-2 flex gap-2">
                 <DialogClose>
                   <Button type="submit">Submit</Button>
@@ -237,7 +305,7 @@ onMounted(() => {
                 <TableCell>{{ index + 1 }}</TableCell>
                 <TableCell>
                   <img
-                    class="rounded-md"
+                    class="rounded-md h-[50px]"
                     :src="`${DOMAIN}/customer/${row.photo}`"
                     alt="Customer Image"
                   />
@@ -269,43 +337,65 @@ onMounted(() => {
                           <DialogDescription> </DialogDescription>
                         </DialogHeader>
                         <form @submit.prevent="handleUpdate(row.id)">
-                          <FormItem class="mt-2">
-                            <label for="name">Name:</label>
-                            <p>{{ edit.name }}</p>
-                            <Input v-model="edit.name" type="text" />
-                          </FormItem>
-                          <FormItem class="mt-2">
-                            <label for="gender">Gender:</label>
-                            <Select v-model="edit.gender">
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Gender" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Gender</SelectLabel>
-                                  <SelectItem value="male"> Male </SelectItem>
-                                  <SelectItem value="female">
-                                    Female
-                                  </SelectItem>
-                                  <SelectItem value="other">
-                                    Others
-                                  </SelectItem>
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                          <FormItem class="mt-2">
-                            <label for="email">Email:</label>
-                            <Input v-model="edit.email" type="email" />
-                          </FormItem>
-                          <FormItem class="mt-2">
-                            <label for="phone">Phone:</label>
-                            <Input v-model="edit.phone" type="text" />
-                          </FormItem>
+                          <div class="flex flex-row gap-4">
+                            <FormItem class="mt-2 w-full">
+                              <label for="name">Name:</label>
+                              <Input v-model="name" type="text" />
+                            </FormItem>
+                            <FormItem class="mt-2 w-full">
+                              <label for="gender">Gender:</label>
+                              <Select v-model="gender">
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Gender" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    <SelectLabel>Gender</SelectLabel>
+                                    <SelectItem value="male"> Male </SelectItem>
+                                    <SelectItem value="female">
+                                      Female
+                                    </SelectItem>
+                                    <SelectItem value="other">
+                                      Others
+                                    </SelectItem>
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                            </FormItem>
+                          </div>
+                          <div class="flex flex-row gap-4">
+                            <FormItem class="mt-2 w-full">
+                              <label for="email">Email:</label>
+                              <Input v-model="email" type="email" />
+                            </FormItem>
+                            <FormItem class="mt-2 w-full">
+                              <label for="phone">Phone:</label>
+                              <Input v-model="phone" type="text" />
+                            </FormItem>
+                          </div>
                           <FormItem class="mt-2">
                             <label for="address">Address:</label>
-                            <Input v-model="edit.address" type="text" />
+                            <Textarea v-model="address" type="text" />
                           </FormItem>
+                          <div class="flex flex-row gap-4">
+                            <FormItem class="mt-2 w-full">
+                              <label for="photo">Photo:</label>
+                              <Input type="file" @change="handleFileChange" />
+                            </FormItem>
+                            <FormItem class="mt-2 w-full flex flex-row gap-2">
+                              <img
+                                :src="`${DOMAIN}/customer/${selectFile}`"
+                                alt="Image Preview"
+                                class="h-[100px] rounded-lg mt-2"
+                              />
+                              <img
+                                v-if(imgUrl)
+                                :src="imgUrl"
+                                alt="Image Preview"
+                                class="h-[100px] rounded-lg mt-2"
+                              />
+                            </FormItem>
+                          </div>
                           <FormItem class="mt-2 flex gap-2">
                             <DialogClose>
                               <Button type="submit">Submit</Button>
@@ -314,9 +404,7 @@ onMounted(() => {
                         </form>
                       </DialogContent>
                     </Dialog>
-                    <!--  -->
                   </TooltipProvider>
-                  <!--  -->
                   <AlertDialog>
                     <AlertDialogTrigger>
                       <TooltipProvider>
