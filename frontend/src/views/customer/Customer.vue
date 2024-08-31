@@ -81,7 +81,6 @@ const clearInput = () => {
 const fetchData = async () => {
   const response = await fetch(`${API_URL}/cus.get`);
   customer.value = (await response?.json()) ?? [];
-  console.log(customer.value);
 };
 
 const handleFileChange = (event: any) => {
@@ -92,6 +91,8 @@ const handleFileChange = (event: any) => {
     const reader = new FileReader();
     reader.onload = (event: any) => {
       imgUrl.value = event.target.result;
+      const photo: any = document.getElementById("photo");
+      photo.style.display = "none";
     };
     reader.readAsDataURL(file);
   }
@@ -139,7 +140,6 @@ const handleEdit = async (id: number) => {
     const response = await fetch(`${API_URL}/cus.only/${id}`);
     edit.value = (await response?.json()) ?? [];
     const data: any = Object.values(edit.value);
-    console.log(data);
     selectFile.value = data[1];
     name.value = data[2];
     gender.value = data[3];
@@ -158,11 +158,12 @@ const handleUpdate = async (id: number) => {
   } else {
     try {
       await axios({
-        method: "put",
+        method: "post",
         url: `${API_URL}/cus.update/${id}`,
         withCredentials: false,
         headers: {
           "Content-Type": "multipart/form-data",
+          "X-HTTP-Method-Override": "PUT",
         },
         data: {
           name: name.value,
@@ -211,8 +212,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mt-6">
-    <Card class="drop-shadow">
+  <div class="container">
+    <Card class="drop-shadow shadow-xl">
       <CardHeader>
         <CardTitle>Customer</CardTitle>
         <CardDescription>Customer Information</CardDescription>
@@ -269,9 +270,15 @@ onMounted(() => {
                 </FormItem>
                 <FormItem class="mt-2 w-full">
                   <img
-                    v-if(imgUrl)
+                    v-if="imgUrl"
                     :src="imgUrl"
                     alt="Image Preview"
+                    class="h-[100px] rounded-lg"
+                  />
+                  <img
+                    v-else
+                    src="../../assets/images/default-image.png"
+                    alt="Callback Image"
                     class="h-[100px] rounded-lg"
                   />
                 </FormItem>
@@ -286,24 +293,25 @@ onMounted(() => {
         </Dialog>
       </CardHeader>
       <CardContent>
-        <ScrollArea class="h-[1300px] rounded-md border p-4">
+        <ScrollArea class="rounded-md border p-4">
           <Table>
             <TableCaption>A list of your recent invoices.</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>No</TableHead>
+                <TableHead class="hidden sm:table-cell">Photo</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Gender</TableHead>
+                <TableHead class="hidden lg:table-cell">Gender</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead class="hidden md:table-cell">Address</TableHead>
+                <TableHead class="hidden md:table-cell">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow v-for="(row, index) in customer" :key="row.id">
                 <TableCell>{{ index + 1 }}</TableCell>
-                <TableCell>
+                <TableCell class="hidden sm:table-cell">
                   <img
                     class="rounded-md h-[50px]"
                     :src="`${DOMAIN}/customer/${row.photo}`"
@@ -311,13 +319,16 @@ onMounted(() => {
                   />
                 </TableCell>
                 <TableCell>{{ row.name }}</TableCell>
-                <TableCell>{{ row.gender }}</TableCell>
+                <TableCell class="hidden lg:table-cell">{{
+                  row.gender
+                }}</TableCell>
                 <TableCell>{{ row.email }}</TableCell>
                 <TableCell>{{ row.phone }}</TableCell>
-                <TableCell>{{ row.address }}</TableCell>
-                <TableCell class="flex gap-2">
+                <TableCell class="hidden md:table-cell">{{
+                  row.address
+                }}</TableCell>
+                <TableCell class="gap-2 hidden md:flex">
                   <TooltipProvider>
-                    <!--  -->
                     <Dialog>
                       <DialogTrigger class="flex float-start">
                         <Tooltip>
@@ -384,6 +395,7 @@ onMounted(() => {
                             </FormItem>
                             <FormItem class="mt-2 w-full flex flex-row gap-2">
                               <img
+                                id="photo"
                                 :src="`${DOMAIN}/customer/${selectFile}`"
                                 alt="Image Preview"
                                 class="h-[100px] rounded-lg mt-2"
@@ -391,7 +403,6 @@ onMounted(() => {
                               <img
                                 v-if(imgUrl)
                                 :src="imgUrl"
-                                alt="Image Preview"
                                 class="h-[100px] rounded-lg mt-2"
                               />
                             </FormItem>

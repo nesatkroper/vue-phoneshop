@@ -2,28 +2,20 @@
 import "animate.css";
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
+import Sidebar from "./components/Sidebar.vue";
 </script>
 
 <template>
-  <div class="overflow-auto scrollbar-hide">
+  <div class="overflow-auto no-scrollbar">
     <Header />
-    <div
-      class="animate__animated animate__fadeInDown animate__delay-0.5s mt-20"
-    >
-      <router-view />
+    <div class="flex flex-col">
+      <Sidebar />
+      <div class="mt-14 mb-14 lg:ms-64 ms-0 py-8">
+        <router-view />
+      </div>
     </div>
     <Footer />
   </div>
 </template>
 
-<style>
-/* In your global CSS or a custom Tailwind CSS file */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Optional: For Firefox */
-.scrollbar-hide {
-  scrollbar-width: none; /* Firefox */
-}
-</style>
+<style></style>

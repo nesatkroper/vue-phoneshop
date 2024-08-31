@@ -18,12 +18,4 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "NotFound",
-};
-</script>
-
-<style scoped>
-/* Add any additional styles here if needed */
-</style>
+<script setup lang="ts"></script>

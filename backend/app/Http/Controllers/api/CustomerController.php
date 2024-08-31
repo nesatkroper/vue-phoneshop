@@ -15,7 +15,7 @@ class CustomerController extends Controller
             $customers = Customer::all();
             return response()->json($customers);
         } catch (\Exception $exception) {
-            return response()->json($exception);
+            return response()->json($exception)->setStatusCode(500);
         }
     }
 
@@ -25,13 +25,21 @@ class CustomerController extends Controller
             $customers = Customer::all()->find($id);
             return response()->json($customers);
         } catch (\Exception $exception) {
-            return response()->json($exception);
+            return response()->json($exception)->setStatusCode(500);
         }
     }
 
     public function createCustomer(Request $request)
     {
         try {
+            $validate = $request->validate([
+                'name' => 'required|string',
+                'gender' => 'required|string',
+                'email' => 'required|email',
+                'phone' => 'required',
+                'address' => 'required',
+            ]);
+
             $path = null;
             if ($request->hasFile('photo')) {
                 $img = $request->file('photo');
@@ -40,16 +48,16 @@ class CustomerController extends Controller
             }
 
             Customer::create([
-                'name' => $request->name,
-                'gender' => $request->gender,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'address' => $request->address,
+                'name' => $validate['name'],
+                'gender' => $validate['gender'],
+                'email' => $validate['email'],
+                'phone' => $validate['phone'],
+                'address' => $validate['address'],
                 'photo' => $path
             ]);
             return response()->json('Customer created successfully');
         } catch (\Exception $exception) {
-            return response()->json($exception);
+            return response()->json($exception)->setStatusCode(500);
         }
     }
 
@@ -57,6 +65,15 @@ class CustomerController extends Controller
     {
         try {
             $customer = Customer::findOrFail($id);
+            $validate = $request->validate([
+                'name' => 'required|string',
+                'gender' => 'required|string',
+                'email' => 'required|email',
+                'phone' => 'required',
+                'address' => 'required',
+                'photo' => 'required'
+            ]);
+
             $path = $customer->photo;
             if ($request->hasFile('photo')) {
                 $old = public_path('customer/' . $path);
@@ -67,17 +84,17 @@ class CustomerController extends Controller
             }
 
             $customer->update([
-                'name' => $request->name,
-                'gender' => $request->gender,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'address' => $request->address,
+                'name' => $validate['name'],
+                'gender' => $validate['gender'],
+                'email' => $validate['email'],
+                'phone' => $validate['phone'],
+                'address' => $validate['address'],
                 'photo' => $path,
             ]);
 
             return response()->json('Customer updated successfully');
         } catch (\Exception $exception) {
-            return response()->json($exception);
+            return response()->json($exception)->setStatusCode(500);
         }
     }
 
@@ -91,7 +108,7 @@ class CustomerController extends Controller
             $customer->delete();
             return response()->json('Customer deleted successfully');
         } catch (\Exception $exception) {
-            return response()->json($exception);
+            return response()->json($exception)->setStatusCode(500);
         }
     }
 }

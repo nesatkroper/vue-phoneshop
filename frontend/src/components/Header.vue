@@ -1,25 +1,308 @@
+<script setup lang="ts">
+import { ref } from "vue";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import profile from "@/assets/images/profile.jpg";
+const isMenuOpen = ref(false);
+const components: { title: string; href: string; description: string }[] = [
+  {
+    title: "Alert Dialog",
+    href: "/docs/primitives/alert-dialog",
+    description:
+      "A modal dialog that interrupts the user with important content and expects a response.",
+  },
+  {
+    title: "Hover Card",
+    href: "/docs/primitives/hover-card",
+    description:
+      "For sighted users to preview content available behind a link.",
+  },
+  {
+    title: "Progress",
+    href: "/docs/primitives/progress",
+    description:
+      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+  },
+  {
+    title: "Scroll-area",
+    href: "/docs/primitives/scroll-area",
+    description: "Visually or semantically separates content.",
+  },
+  {
+    title: "Tabs",
+    href: "/docs/primitives/tabs",
+    description:
+      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  },
+  {
+    title: "Tooltip",
+    href: "/docs/primitives/tooltip",
+    description:
+      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+  },
+  {
+    title: "Alert Dialog",
+    href: "/docs/primitives/alert-dialog",
+    description:
+      "A modal dialog that interrupts the user with important content and expects a response.",
+  },
+  {
+    title: "Hover Card",
+    href: "/docs/primitives/hover-card",
+    description:
+      "For sighted users to preview content available behind a link.",
+  },
+  {
+    title: "Progress",
+    href: "/docs/primitives/progress",
+    description:
+      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+  },
+  {
+    title: "Scroll-area",
+    href: "/docs/primitives/scroll-area",
+    description: "Visually or semantically separates content.",
+  },
+  {
+    title: "Tabs",
+    href: "/docs/primitives/tabs",
+    description:
+      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  },
+  {
+    title: "Tooltip",
+    href: "/docs/primitives/tooltip",
+    description:
+      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+  },
+];
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+</script>
 <template>
   <nav
     class="fixed top-0 left-0 right-0 bg-white opacity-95 text-black shadow-md z-50"
   >
-    <div class="container mx-auto flex items-center justify-between px-4 py-3">
+    <div class="container mx-auto flex items-center justify-between px-4 py-2">
       <div class="text-2xl font-semibold">
         <RouterLink to="/" class="text-black hover:text-gray-300"
           >MyApp</RouterLink
         >
       </div>
 
-      <div class="hidden md:flex space-x-4">
-        <RouterLink to="/" class="hover:text-gray-300">Home</RouterLink>
-        <RouterLink to="/about" class="hover:text-gray-300">About</RouterLink>
-        <RouterLink to="/customer" class="hover:text-gray-300"
-          >Customer</RouterLink
-        >
-        <RouterLink to="/contact" class="hover:text-gray-300"
-          >Contact</RouterLink
-        >
+      <div class="hidden lg:flex space-x-4">
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink :class="navigationMenuTriggerStyle()">
+                <RouterLink to="/" class="hover:text-gray-300">Home</RouterLink>
+                <!-- Home -->
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul
+                  class="grid w-[300px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px]"
+                >
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul
+                  class="grid w-[300px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px]"
+                >
+                  <li v-for="component in components" :key="component.title">
+                    <NavigationMenuLink as-child>
+                      <a
+                        :href="component.href"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                      >
+                        <div class="text-sm font-medium leading-none">
+                          {{ component.title }}
+                        </div>
+                        <p
+                          class="line-clamp-2 text-sm leading-snug text-muted-foreground"
+                        >
+                          {{ component.description }}
+                        </p>
+                      </a>
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Customer</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul
+                  class="grid w-[300px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px]"
+                >
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/customer"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Customer</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/customer"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Customer</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/customer"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Customer</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/customer"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Customer</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul
+                  class="grid w-[300px] gap-3 p-4 md:w-[400px] md:grid-cols-2 lg:w-[500px]"
+                >
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink as-child>
+                      <RouterLink
+                        to="/contact"
+                        class="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >Contact</RouterLink
+                      >
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Avatar>
+              <AvatarImage :src="profile" alt="@radix-vue" />
+              <AvatarFallback>My Profile</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Billing</DropdownMenuItem>
+            <DropdownMenuItem>Team</DropdownMenuItem>
+            <DropdownMenuItem>Subscription</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-      <button @click="toggleMenu" class="md:hidden text-black">
+      <button @click="toggleMenu" class="lg:hidden text-black">
         <svg
           class="w-6 h-6"
           fill="none"
@@ -36,130 +319,25 @@
         </svg>
       </button>
     </div>
-    <div v-show="isMenuOpen" class="md:hidden bg-gray-700">
-      <RouterLink to="/" class="block px-4 py-2 text-white hover:bg-gray-600"
+    <div v-show="isMenuOpen" class="lg:hidden bg-white">
+      <RouterLink to="/" class="block px-4 py-2 text-black hover:bg-gray-600"
         >Home</RouterLink
       >
       <RouterLink
         to="/about"
-        class="block px-4 py-2 text-white hover:bg-gray-600"
+        class="block px-4 py-2 text-black hover:bg-gray-600"
         >About</RouterLink
       >
       <RouterLink
-        to="/services"
-        class="block px-4 py-2 text-white hover:bg-gray-600"
-        >Services</RouterLink
+        to="/customer"
+        class="block px-4 py-2 text-black hover:bg-gray-600"
+        >Customer</RouterLink
       >
       <RouterLink
         to="/contact"
-        class="block px-4 py-2 text-white hover:bg-gray-600"
+        class="block px-4 py-2 text-black hover:bg-gray-600"
         >Contact</RouterLink
       >
     </div>
   </nav>
 </template>
-
-<script>
-export default {
-  name: "Navbar",
-  data() {
-    return {
-      isMenuOpen: false,
-    };
-  },
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
-  },
-};
-</script>
-
-<style scoped>
-/* Add any additional styles here if needed */
-</style>
-
-<!-- <template>
-  <nav class="flex items-center justify-between p-4 bg-white shadow-md">
-    <div class="flex items-center space-x-4">
-      <div class="font-semibold text-lg text-gray-800">/shadcn-vue</div>
-      <div class="flex space-x-4">
-        <a href="#" class="text-gray-600 hover:text-gray-800">Docs</a>
-        <a href="#" class="text-gray-600 hover:text-gray-800">Components</a>
-        <a href="#" class="text-gray-600 hover:text-gray-800">Themes</a>
-        <a href="/" class="text-gray-600 hover:text-gray-800">Examples</a>
-        <RouterLink to="customer" class="text-gray-600 hover:text-gray-800"
-          >Blocks</RouterLink
-        >
-      </div>
-    </div>
-
-    <div class="relative w-1/3">
-      <input
-        type="text"
-        placeholder="Search..."
-        class="w-full p-2 pl-8 pr-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      />
-      <div class="absolute left-2 top-2 text-gray-400">
-        <kbd class="px-2 py-1 text-xs border rounded bg-gray-100">⌘ K</kbd>
-      </div>
-    </div>
-
-    <div class="flex items-center space-x-4 text-gray-600">
-      <button class="hover:text-gray-800">
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5 13l4 4L19 7"
-          ></path>
-        </svg>
-      </button>
-      <button class="hover:text-gray-800">
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5 13l4 4L19 7"
-          ></path>
-        </svg>
-      </button>
-      <button class="hover:text-gray-800">
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5 13l4 4L19 7"
-          ></path>
-        </svg>
-      </button>
-    </div>
-  </nav>
-</template>
-
-<script setup>
-</script>
-
-<style scoped>
-</style> -->
