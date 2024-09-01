@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\PhoneModel;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,11 @@ class PhoneModelController extends Controller
     {
         try {
             $brand = PhoneModel::all();
-            return response()->json($brand);
+            $cus = Customer::all();
+            return response()->json([
+                $brand,
+                $cus
+            ]);
         } catch (\Exception $e) {
             return response()->json($e)->setStatusCode(500);
         }
