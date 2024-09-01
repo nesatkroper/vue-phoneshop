@@ -13,13 +13,16 @@ class CustomerController extends Controller
     {
         try {
             $customers = Customer::all();
-            return response()->json($customers);
+            return response()->json(
+                $customers,
+
+            );
         } catch (\Exception $exception) {
             return response()->json($exception)->setStatusCode(500);
         }
     }
 
-    public function getCustomerById(string $id)
+    public function getOnlyCustomer(string $id)
     {
         try {
             $customers = Customer::all()->find($id);
