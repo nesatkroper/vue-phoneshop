@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+// @ts-ignore
 import NotFound from "../views/404/NotFound.vue";
 const routes = [
   {
@@ -15,6 +16,31 @@ const routes = [
     path: "/profile",
     component: () => import("../views/portfolio/Portfolio.vue"),
     name: "profile",
+  },
+  {
+    path: "/category",
+    component: () => import("../views/category/Category.vue"),
+    name: "category",
+  },
+  {
+    path: "/brand",
+    component: () => import("../views/brand/Brand.vue"),
+    name: "brand",
+  },
+  {
+    path: "/product",
+    component: () => import("../views/product/Product.vue"),
+    name: "product",
+  },
+  {
+    path: "/pro.photo",
+    component: () => import("../views/pro_photo/ProPhoto.vue"),
+    name: "pro.photo",
+  },
+  {
+    path: "/video",
+    component: () => import("../views/videos/Video.vue"),
+    name: "video",
   },
   {
     path: "/:pathMatch(.*)*",

@@ -15,19 +15,12 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
@@ -52,41 +45,41 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/toast/use-toast";
-import { Textarea } from "@/components/ui/textarea";
 import { FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { DOMAIN, API_URL } from "../../config/api";
-import type { Customer } from "../types/customer";
+import type { ProPhoto } from "../types/ProPhoto";
 import { Toaster } from "@/components/ui/toast";
 
 const { toast } = useToast();
-const customer = ref<Customer[]>([]);
-const edit = ref<Customer[]>([]);
+const pphoto = ref<ProPhoto[]>([]);
+const data = ref<ProPhoto[]>([]);
+const edit = ref<ProPhoto[]>([]);
 const datetime = ref(new Date().toLocaleString());
+
 const selectFile = ref("");
 const imgUrl = ref("");
 const name = ref("");
-const gender = ref("");
-const email = ref("");
-const phone = ref("");
-const address = ref("");
+const code = ref("");
+const pro_id = ref("");
+const desc = ref("");
 
 const clearInput = () => {
-  name.value = "";
-  gender.value = "";
-  email.value = "";
-  phone.value = "";
-  address.value = "";
+  code.value = "";
+  pro_id.value = "";
   imgUrl.value = "";
   selectFile.value = "";
 };
 
 const fetchData = async () => {
-  const response = await fetch(`${API_URL}/customer`);
-  customer.value = (await response?.json()) ?? [];
-  console.log(customer.value);
+  const response = await fetch(`${API_URL}/brand`);
+  pphoto.value = (await response?.json()) ?? [];
+  data.value = Object.values(pphoto.value);
+  console.log(pphoto.value);
+  console.log(data[0]);
+  console.log(data[1]);
 };
 
 const handleFileChange = (event: any) => {
@@ -212,25 +205,6 @@ const handleDelete = async (id: number) => {
   }
 };
 
-// function skeleton() {
-//   var is = true;
-//   let skeleton = document.querySelectorAll(".skeleton");
-//   if (is) {
-//     skeleton.forEach((ske) => {
-//       ske.classList.remove("hidden");
-//       ske.classList.add("flex");
-//     });
-//     is = false;
-//   } else if (is == false) {
-//     skeleton.forEach((ske) => {
-//       ske.classList.remove("flex");
-//       ske.classList.add("hidden");
-//     });
-//     is = true;
-//   }
-//   console.log(is);
-// }
-
 onMounted(() => {
   fetchData();
 });
@@ -242,25 +216,25 @@ onMounted(() => {
   <div class="container my-8">
     <Card class="drop-shadow shadow-xl">
       <CardHeader>
-        <CardTitle>Customer</CardTitle>
+        <CardTitle>Product Photo</CardTitle>
         <Dialog>
           <DialogTrigger class="flex float-start">
-            <Button class="w-[200px]">Add Customer</Button>
+            <Button class="w-[200px]">Add Photo</Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Customer</DialogTitle>
+              <DialogTitle>Add Product Photo</DialogTitle>
               <DialogDescription> </DialogDescription>
             </DialogHeader>
             <form @submit.prevent="handleCreate">
               <div class="flex flex-row gap-4">
                 <FormItem class="mt-2 w-full">
-                  <label for="name">Name:</label>
-                  <Input v-model="name" type="text" />
+                  <label for="name">Code:</label>
+                  <Input v-model="code" type="text" />
                 </FormItem>
                 <FormItem class="mt-2 w-full">
-                  <label for="gender">Gender:</label>
-                  <Select v-model="gender">
+                  <label for="gender">Product ID:</label>
+                  <Select v-model="pro_id">
                     <SelectTrigger>
                       <SelectValue placeholder="Select Gender" />
                     </SelectTrigger>
@@ -275,20 +249,6 @@ onMounted(() => {
                   </Select>
                 </FormItem>
               </div>
-              <div class="flex flex-row gap-4">
-                <FormItem class="mt-2 w-full">
-                  <label for="email">Email:</label>
-                  <Input v-model="email" type="email" />
-                </FormItem>
-                <FormItem class="mt-2 w-full">
-                  <label for="phone">Phone:</label>
-                  <Input v-model="phone" type="text" />
-                </FormItem>
-              </div>
-              <FormItem class="mt-2">
-                <label for="address">Address:</label>
-                <Textarea v-model="address" type="text" />
-              </FormItem>
               <div class="flex flex-row gap-4">
                 <FormItem class="mt-2 w-full">
                   <label for="photo">Photo:</label>
@@ -316,7 +276,7 @@ onMounted(() => {
                     @click="
                       () => {
                         toast({
-                          title: 'Customer Added Successfully',
+                          title: 'Photo Added Successfully',
                           description: `on this day, ${datetime}`,
                         });
                       }
@@ -333,16 +293,14 @@ onMounted(() => {
       <CardContent>
         <ScrollArea class="rounded-md border p-4">
           <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>No</TableHead>
                 <TableHead class="hidden sm:table-cell">Photo</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead class="hidden lg:table-cell">Gender</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead class="hidden md:table-cell">Address</TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead>Product ID</TableHead>
+                <TableHead>Description</TableHead>
                 <TableHead class="hidden md:table-cell">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -356,7 +314,7 @@ onMounted(() => {
                 </div>
               </div>
               <!--  -->
-              <TableRow v-for="(row, index) in customer" :key="row.id">
+              <TableRow v-for="(row, index) in data[0]" :key="index">
                 <TableCell>{{ index + 1 }}</TableCell>
                 <TableCell class="hidden sm:table-cell">
                   <img
@@ -365,15 +323,11 @@ onMounted(() => {
                     alt="Customer Image"
                   />
                 </TableCell>
-                <TableCell> {{ row.name }}</TableCell>
-                <TableCell class="hidden lg:table-cell">{{
-                  row.gender
-                }}</TableCell>
-                <TableCell>{{ row.email }}</TableCell>
-                <TableCell>{{ row.phone }}</TableCell>
-                <TableCell class="hidden md:table-cell">{{
-                  row.address
-                }}</TableCell>
+
+                <TableCell>{{ row.name }}</TableCell>
+                <TableCell>{{ row.code }}</TableCell>
+                <TableCell>{{ row.pro_id }}</TableCell>
+                <TableCell>{{ row.desc }}</TableCell>
                 <TableCell class="gap-2 hidden md:flex">
                   <TooltipProvider>
                     <Dialog>
@@ -385,7 +339,7 @@ onMounted(() => {
                             ></TooltipTrigger
                           >
                           <TooltipContent>
-                            <p>Edit Customer Information</p>
+                            <p>Edit Product Photo Information</p>
                           </TooltipContent>
                         </Tooltip>
                       </DialogTrigger>
@@ -423,20 +377,6 @@ onMounted(() => {
                           </div>
                           <div class="flex flex-row gap-4">
                             <FormItem class="mt-2 w-full">
-                              <label for="email">Email:</label>
-                              <Input v-model="email" type="email" />
-                            </FormItem>
-                            <FormItem class="mt-2 w-full">
-                              <label for="phone">Phone:</label>
-                              <Input v-model="phone" type="text" />
-                            </FormItem>
-                          </div>
-                          <FormItem class="mt-2">
-                            <label for="address">Address:</label>
-                            <Textarea v-model="address" type="text" />
-                          </FormItem>
-                          <div class="flex flex-row gap-4">
-                            <FormItem class="mt-2 w-full">
                               <label for="photo">Photo:</label>
                               <Input type="file" @change="handleFileChange" />
                             </FormItem>
@@ -461,7 +401,7 @@ onMounted(() => {
                                 @click="
                                   () => {
                                     toast({
-                                      title: 'Customer Updated Successfully',
+                                      title: 'Photo Updated Successfully',
                                       description: `on this day, ${datetime}`,
                                     });
                                   }
@@ -483,7 +423,7 @@ onMounted(() => {
                             ><Button>Delete</Button></TooltipTrigger
                           >
                           <TooltipContent>
-                            <p>Delete Customer Information</p>
+                            <p>Delete Product Photo Information</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -507,7 +447,7 @@ onMounted(() => {
                             @click="
                               () => {
                                 toast({
-                                  title: 'Customer Deleted Successfully',
+                                  title: 'Photo Deleted Successfully',
                                   description: `on this day, ${datetime}`,
                                 });
                               }

@@ -16,9 +16,5 @@
       >Suon Phanun</a
     >
     <span>.</span>
-    <!-- <span class="mx-1">The code source is available on</span>
-    <a href="#" class="font-semibold text-gray-800 hover:underline">GitHub</a>
-    <span>.</span> -->
   </footer>
 </template>
-Refsnes Data. .
