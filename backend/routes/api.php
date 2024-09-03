@@ -27,4 +27,4 @@ route::get('/photo', [ProductPhotoController::class, 'getProductPhoto']);
 route::get('/photo/{id}', [ProductPhotoController::class, 'getOnlyProductPhoto']);
 route::post('/photo', [ProductPhotoController::class, 'createProductPhoto']);
 route::put('/photo', [ProductPhotoController::class, 'getProductPhoto']);
-route::delete('/photo', [ProductPhotoController::class, 'getProductPhoto']);
+route::delete('/photo/{id}', [ProductPhotoController::class, 'deleteProductPhoto']);

@@ -61,7 +61,6 @@ const datetime = ref(new Date().toLocaleString());
 
 const selectFile = ref("");
 const imgUrl = ref("");
-const name = ref("");
 const code = ref("");
 const pro_id = ref("");
 const desc = ref("");
@@ -74,11 +73,13 @@ const clearInput = () => {
 };
 
 const fetchData = async () => {
-  const response = await fetch(`${API_URL}/brand`);
+  const response = await fetch(`${API_URL}/photo`);
   pphoto.value = (await response?.json()) ?? [];
   data.value = Object.values(pphoto.value);
   console.log(pphoto.value);
+  // @ts-ignore
   console.log(data[0]);
+  // @ts-ignore
   console.log(data[1]);
 };
 
@@ -105,17 +106,14 @@ const handleCreate = async () => {
     try {
       await axios({
         method: "post",
-        url: `${API_URL}/customer`,
+        url: `${API_URL}/photo`,
         withCredentials: false,
         headers: {
           "Content-Type": "multipart/form-data",
         },
         data: {
-          name: name.value,
-          gender: gender.value,
-          email: email.value,
-          phone: phone.value,
-          address: address.value,
+          code: code.value,
+          pro_id: pro_id.value,
           photo: selectFile.value,
         },
       })
@@ -191,7 +189,7 @@ const handleDelete = async (id: number) => {
   try {
     await axios({
       method: "delete",
-      url: `${API_URL}/customer/${id}`,
+      url: `${API_URL}/photo/${id}`,
     })
       .then((respone) => {
         console.log(respone);
@@ -239,14 +237,19 @@ onMounted(() => {
                       <SelectValue placeholder="Select Gender" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Gender</SelectLabel>
-                        <SelectItem value="male"> Male </SelectItem>
-                        <SelectItem value="female"> Female </SelectItem>
-                        <SelectItem value="other"> Others </SelectItem>
+                      <SelectGroup v-for="pro in data[0]" :key="pro.id">
+                        <SelectItem :value="pro.id">
+                          {{ pro.name }}
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
+                </FormItem>
+              </div>
+              <div class="flex flex-row gap-4">
+                <FormItem class="mt-2 w-full">
+                  <label for="name">Description:</label>
+                  <Input v-model="desc" type="text" />
                 </FormItem>
               </div>
               <div class="flex flex-row gap-4">
@@ -297,10 +300,8 @@ onMounted(() => {
               <TableRow>
                 <TableHead>No</TableHead>
                 <TableHead class="hidden sm:table-cell">Photo</TableHead>
-                <TableHead>Name</TableHead>
                 <TableHead>Code</TableHead>
                 <TableHead>Product ID</TableHead>
-                <TableHead>Description</TableHead>
                 <TableHead class="hidden md:table-cell">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -314,7 +315,7 @@ onMounted(() => {
                 </div>
               </div>
               <!--  -->
-              <TableRow v-for="(row, index) in data[0]" :key="index">
+              <TableRow v-for="(row, index) in data[1]" :key="index">
                 <TableCell>{{ index + 1 }}</TableCell>
                 <TableCell class="hidden sm:table-cell">
                   <img
@@ -323,11 +324,8 @@ onMounted(() => {
                     alt="Customer Image"
                   />
                 </TableCell>
-
-                <TableCell>{{ row.name }}</TableCell>
                 <TableCell>{{ row.code }}</TableCell>
-                <TableCell>{{ row.pro_id }}</TableCell>
-                <TableCell>{{ row.desc }}</TableCell>
+                <TableCell>{{ row.pro_name }}</TableCell>
                 <TableCell class="gap-2 hidden md:flex">
                   <TooltipProvider>
                     <Dialog>

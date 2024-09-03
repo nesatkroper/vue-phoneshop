@@ -1,8 +1,6 @@
 export type ProPhoto = {
   id: number;
-  name: string;
-  code: string;
-  pro_id: string;
-  photo: string;
-  desc: string;
+  code: any;
+  pro_id: any;
+  photo: any;
 };
