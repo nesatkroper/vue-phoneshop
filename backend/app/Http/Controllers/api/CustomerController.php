@@ -13,10 +13,15 @@ class CustomerController extends Controller
     {
         try {
             $customers = Customer::all();
-            return response()->json(
-                $customers,
-
-            );
+            if ($customers != '[]') {
+                return response()->json(
+                    $customers,
+                );
+            } else {
+                return response()->json([
+                    'message' => 'no data',
+                ], 404);
+            }
         } catch (\Exception $exception) {
             return response()->json($exception)->setStatusCode(500);
         }
@@ -26,7 +31,15 @@ class CustomerController extends Controller
     {
         try {
             $customers = Customer::all()->find($id);
-            return response()->json($customers);
+            if ($customers != '[]') {
+                return response()->json(
+                    $customers,
+                );
+            } else {
+                return response()->json([
+                    'message' => 'no data',
+                ], 404);
+            }
         } catch (\Exception $exception) {
             return response()->json($exception)->setStatusCode(500);
         }

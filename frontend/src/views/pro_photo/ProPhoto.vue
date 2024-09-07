@@ -73,14 +73,21 @@ const clearInput = () => {
 };
 
 const fetchData = async () => {
-  const response = await fetch(`${API_URL}/photo`);
-  pphoto.value = (await response?.json()) ?? [];
-  data.value = Object.values(pphoto.value);
-  console.log(pphoto.value);
-  // @ts-ignore
-  console.log(data[0]);
-  // @ts-ignore
-  console.log(data[1]);
+  try {
+    const response = await fetch(`${API_URL}/photo`);
+    pphoto.value = (await response?.json()) ?? [];
+    data.value = Object.values(pphoto.value);
+    toast({
+      title: "Data Fetch",
+      description: "Data Fetching successfully",
+    });
+  } catch (err: any) {
+    console.error(err);
+    toast({
+      title: "Data Fetch",
+      description: `Data Fetching Errors: ${err.message}`,
+    });
+  }
 };
 
 const handleFileChange = (event: any) => {
@@ -134,15 +141,16 @@ const handleCreate = async () => {
 
 const handleEdit = async (id: number) => {
   try {
-    const response = await fetch(`${API_URL}/customer/${id}`);
+    const response = await fetch(`${API_URL}/photo/${id}`);
     edit.value = (await response?.json()) ?? [];
-    const data: any = Object.values(edit.value);
-    selectFile.value = data[1];
-    name.value = data[2];
-    gender.value = data[3];
-    email.value = data[4];
-    phone.value = data[5];
-    address.value = data[6];
+    const value: any = Object.values(edit.value);
+    console.log(value[1].value);
+    // selectFile.value = data[1];
+    // name.value = data[2];
+    // gender.value = data[3];
+    // email.value = data[4];
+    // phone.value = data[5];
+    // address.value = data[6];
   } catch (err) {
     console.log(err);
   }
@@ -349,28 +357,32 @@ onMounted(() => {
                         <form @submit.prevent="handleUpdate(row.id)">
                           <div class="flex flex-row gap-4">
                             <FormItem class="mt-2 w-full">
-                              <label for="name">Name:</label>
-                              <Input v-model="name" type="text" />
+                              <label for="name">Code:</label>
+                              <Input v-model="code" type="text" />
                             </FormItem>
                             <FormItem class="mt-2 w-full">
-                              <label for="gender">Gender:</label>
-                              <Select v-model="gender">
+                              <label for="gender">Product ID:</label>
+                              <Select v-model="pro_id">
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select Gender" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectGroup>
-                                    <SelectLabel>Gender</SelectLabel>
-                                    <SelectItem value="male"> Male </SelectItem>
-                                    <SelectItem value="female">
-                                      Female
-                                    </SelectItem>
-                                    <SelectItem value="other">
-                                      Others
+                                  <SelectGroup
+                                    v-for="pro in data[0]"
+                                    :key="pro.id"
+                                  >
+                                    <SelectItem :value="pro.id">
+                                      {{ pro.name }}
                                     </SelectItem>
                                   </SelectGroup>
                                 </SelectContent>
                               </Select>
+                            </FormItem>
+                          </div>
+                          <div class="flex flex-row gap-4">
+                            <FormItem class="mt-2 w-full">
+                              <label for="name">Description:</label>
+                              <Input v-model="desc" type="text" />
                             </FormItem>
                           </div>
                           <div class="flex flex-row gap-4">

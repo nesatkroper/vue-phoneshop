@@ -21,13 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
@@ -86,7 +80,12 @@ const clearInput = () => {
 const fetchData = async () => {
   const response = await fetch(`${API_URL}/customer`);
   customer.value = (await response?.json()) ?? [];
-  console.log(customer.value);
+  if (customer.value.message == "no data") {
+    customer.value = [];
+    toast({
+      title: "No customer found",
+    });
+  }
 };
 
 const handleFileChange = (event: any) => {

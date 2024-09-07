@@ -6,4 +6,5 @@ export type Customer = {
   phone: string[];
   address: string[];
   photo: string[];
+  message: string[];
 };

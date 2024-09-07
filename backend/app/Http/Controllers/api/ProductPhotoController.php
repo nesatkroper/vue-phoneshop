@@ -27,8 +27,10 @@ class ProductPhotoController extends Controller
     public function getOnlyProductPhoto(string $id)
     {
         try {
-            $pro = ProductPhoto::all()->find($id);
-            return response()->json($pro)->setStatusCode(200);
+            $pphoto = DB::table('product_photos')
+                ->leftjoin('products', 'product_photos.pro_id', '=', 'products.id')
+                ->select('product_photos.*', 'products.name as pro_name')->where('product_photos.id', $id)->get();
+            return response()->json($pphoto)->setStatusCode(200);
         } catch (\Exception $e) {
             return response()->json($e)->setStatusCode(500);
         }
