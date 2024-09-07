@@ -57,13 +57,13 @@ const { toast } = useToast();
 const pphoto = ref<ProPhoto[]>([]);
 const data = ref<ProPhoto[]>([]);
 const edit = ref<ProPhoto[]>([]);
+let editData;
 const datetime = ref(new Date().toLocaleString());
 
 const selectFile = ref("");
 const imgUrl = ref("");
 const code = ref("");
 const pro_id = ref("");
-const desc = ref("");
 
 const clearInput = () => {
   code.value = "";
@@ -73,6 +73,7 @@ const clearInput = () => {
 };
 
 const fetchData = async () => {
+<<<<<<< HEAD
   try {
     const response = await fetch(`${API_URL}/photo`);
     pphoto.value = (await response?.json()) ?? [];
@@ -88,6 +89,12 @@ const fetchData = async () => {
       description: `Data Fetching Errors: ${err.message}`,
     });
   }
+=======
+  const response = await fetch(`${API_URL}/photo`);
+  pphoto.value = (await response?.json()) ?? [];
+  data.value = Object.values(pphoto.value);
+  console.log(pphoto.value);
+>>>>>>> ff3bc5b0c274a0ae985073007ff46f8b2d4c9a76
 };
 
 const handleFileChange = (event: any) => {
@@ -143,6 +150,7 @@ const handleEdit = async (id: number) => {
   try {
     const response = await fetch(`${API_URL}/photo/${id}`);
     edit.value = (await response?.json()) ?? [];
+<<<<<<< HEAD
     const value: any = Object.values(edit.value);
     console.log(value[1].value);
     // selectFile.value = data[1];
@@ -151,6 +159,11 @@ const handleEdit = async (id: number) => {
     // email.value = data[4];
     // phone.value = data[5];
     // address.value = data[6];
+=======
+    editData = Object.values(edit.value);
+    imgUrl.value = editData[0].photo;
+    console.log(editData[0]);
+>>>>>>> ff3bc5b0c274a0ae985073007ff46f8b2d4c9a76
   } catch (err) {
     console.log(err);
   }
@@ -171,7 +184,6 @@ const handleUpdate = async (id: number) => {
           "X-HTTP-Method-Override": "PUT",
         },
         data: {
-          name: name.value,
           gender: gender.value,
           email: email.value,
           phone: phone.value,
@@ -236,13 +248,13 @@ onMounted(() => {
               <div class="flex flex-row gap-4">
                 <FormItem class="mt-2 w-full">
                   <label for="name">Code:</label>
-                  <Input v-model="code" type="text" />
+                  <Input v-model="code" type="text" placeholder="brand00#" />
                 </FormItem>
                 <FormItem class="mt-2 w-full">
                   <label for="gender">Product ID:</label>
                   <Select v-model="pro_id">
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Gender" />
+                      <SelectValue placeholder="Select Product ID" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup v-for="pro in data[0]" :key="pro.id">
@@ -252,12 +264,6 @@ onMounted(() => {
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                </FormItem>
-              </div>
-              <div class="flex flex-row gap-4">
-                <FormItem class="mt-2 w-full">
-                  <label for="name">Description:</label>
-                  <Input v-model="desc" type="text" />
                 </FormItem>
               </div>
               <div class="flex flex-row gap-4">
@@ -328,7 +334,7 @@ onMounted(() => {
                 <TableCell class="hidden sm:table-cell">
                   <img
                     class="rounded-md h-[50px]"
-                    :src="`${DOMAIN}/customer/${row.photo}`"
+                    :src="`${DOMAIN}/pro_photo/${row.photo}`"
                     alt="Customer Image"
                   />
                 </TableCell>
@@ -358,13 +364,23 @@ onMounted(() => {
                           <div class="flex flex-row gap-4">
                             <FormItem class="mt-2 w-full">
                               <label for="name">Code:</label>
+<<<<<<< HEAD
                               <Input v-model="code" type="text" />
+=======
+                              <Input
+                                v-model="editData[0].code"
+                                type="text"
+                                placeholder="brand00#"
+                              />
+>>>>>>> ff3bc5b0c274a0ae985073007ff46f8b2d4c9a76
                             </FormItem>
                             <FormItem class="mt-2 w-full">
                               <label for="gender">Product ID:</label>
                               <Select v-model="pro_id">
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select Gender" />
+                                  <SelectValue
+                                    :placeholder="editData[0].pro_name"
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectGroup
@@ -390,17 +406,18 @@ onMounted(() => {
                               <label for="photo">Photo:</label>
                               <Input type="file" @change="handleFileChange" />
                             </FormItem>
-                            <FormItem class="mt-2 w-full flex flex-row gap-2">
+                            <FormItem class="mt-2 w-full">
                               <img
-                                id="photo"
-                                :src="`${DOMAIN}/customer/${selectFile}`"
+                                v-if="imgUrl"
+                                :src="`${DOMAIN}/pro_photo/${imgUrl}`"
                                 alt="Image Preview"
-                                class="h-[100px] rounded-lg mt-2"
+                                class="h-[100px] rounded-lg"
                               />
                               <img
-                                v-if(imgUrl)
-                                :src="imgUrl"
-                                class="h-[100px] rounded-lg mt-2"
+                                v-else
+                                src="../../assets/images/default-image.png"
+                                alt="Callback Image"
+                                class="h-[100px] rounded-lg"
                               />
                             </FormItem>
                           </div>

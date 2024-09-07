@@ -27,10 +27,19 @@ class ProductPhotoController extends Controller
     public function getOnlyProductPhoto(string $id)
     {
         try {
+<<<<<<< HEAD
             $pphoto = DB::table('product_photos')
                 ->leftjoin('products', 'product_photos.pro_id', '=', 'products.id')
                 ->select('product_photos.*', 'products.name as pro_name')->where('product_photos.id', $id)->get();
             return response()->json($pphoto)->setStatusCode(200);
+=======
+            $pro = DB::table('product_photos')
+                ->leftjoin('products', 'product_photos.pro_id', '=', 'products.id')
+                ->select('product_photos.*', 'products.name as pro_name')->where('product_photos.id', '=', $id)->get();
+
+
+            return response()->json($pro)->setStatusCode(200);
+>>>>>>> ff3bc5b0c274a0ae985073007ff46f8b2d4c9a76
         } catch (\Exception $e) {
             return response()->json($e)->setStatusCode(500);
         }
@@ -49,7 +58,7 @@ class ProductPhotoController extends Controller
             ProductPhoto::create([
                 'photo' => $path,
                 'pro_id' => $request->pro_id,
-                'code' => $request->code,
+                'code' => 'brand00' . $request->code,
             ]);
 
             return response()->json("success")->setStatusCode(200);
